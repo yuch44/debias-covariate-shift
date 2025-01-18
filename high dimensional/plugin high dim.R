@@ -1,5 +1,8 @@
 source("Helper Functions.R")
 source("Tests.R")
+num_cores <- detectCores()
+cl <- makeCluster(num_cores-2)
+registerDoSNOW(cl)
 
 # null
 
@@ -16,7 +19,7 @@ sigma <- 1
 alt <- 0
 
 
-results_250 <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,7499)
+results_250 <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt)
 results_250 <- as.data.frame(do.call(rbind, results_250))
 
 # 500
@@ -32,7 +35,7 @@ sigma <- 1
 alt <- 0
 
 
-results_500 <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,8849)
+results_500 <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt)
 results_500 <- as.data.frame(do.call(rbind, results_500))
 
 #1000
@@ -47,7 +50,7 @@ s <- 5
 sigma <- 1
 alt <- 0
 
-results_1000 <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,8448)
+results_1000 <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt)
 results_1000 <- as.data.frame(do.call(rbind, results_1000))
 
 #2000
@@ -62,7 +65,7 @@ s <- 5
 sigma <- 1
 alt <- 0
 
-results_2000 <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,9932)
+results_2000 <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt)
 results_2000 <- as.data.frame(do.call(rbind, results_2000))
 
 
@@ -81,7 +84,7 @@ sigma <- 1
 alt <- 0.25
 
 
-results_250_a <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,4029)
+results_250_a <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt)
 results_250_a <- as.data.frame(do.call(rbind, results_250_a))
 
 # 500
@@ -96,7 +99,7 @@ sigma <- 1
 alt <- .25
 numFolds <- 2
 
-results_500_a <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,8533)
+results_500_a <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt)
 results_500_a <- as.data.frame(do.call(rbind, results_500_a))
 
 #1000
@@ -111,7 +114,7 @@ sigma <- 1
 alt <- .25
 numFolds <- 2
 
-results_1000_a <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,8148)
+results_1000_a <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt)
 results_1000_a <- as.data.frame(do.call(rbind, results_1000_a))
 
 #2000
@@ -126,5 +129,7 @@ sigma <- 1
 alt <- .25
 numFolds <- 2
 
-results_2000_a <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,9080)
+results_2000_a <- high_dim_plugin(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt)
 results_2000_a <- as.data.frame(do.call(rbind, results_2000_a))
+
+stopCluster(cl)

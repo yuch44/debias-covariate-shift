@@ -1,17 +1,16 @@
+library(doParallel)
 library(foreach)
 library(doSNOW)
 library(doRNG)
 
 num_cores <- detectCores()
 
-low_dim_lin <- function(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,seed){
-  cl <- makeCluster(num_cores-2)
-  registerDoSNOW(cl)
+low_dim_lin <- function(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt){
   pb <- txtProgressBar(max = M, style = 3)
   progress <- function(n) setTxtProgressBar(pb, n)
   opts <- list(progress = progress)
 
-  result <- foreach(i =1:M, .options.snow = opts, .options.RNG=seed
+  result <- foreach(i =1:M, .options.snow = opts
   ) %dorng% {
     source("Helper Functions.R",local = TRUE)
     data <- rbind(generate_data(s,n,rep(0,d),beta,0,sigma,0,mu),generate_data(s,n,mu,beta,1,sigma,alt,mu))
@@ -102,20 +101,16 @@ low_dim_lin <- function(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,seed){
     num_rejected <- ifelse(t >= qnorm(1-alpha_set), 1, 0)
     return(c(value,sqrt(variance),num_rejected,t))
   }
-
-  stopCluster(cl)
   return(result)
 }
 
 
 low_dim_plugin <- function(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,seed){
-  cl <- makeCluster(6)
-  registerDoSNOW(cl)
   pb <- txtProgressBar(max = M, style = 3)
   progress <- function(n) setTxtProgressBar(pb, n)
   opts <- list(progress = progress)
   
-  result <- foreach(i =1:M, .options.snow = opts, .options.RNG=seed) %dorng% {
+  result <- foreach(i =1:M, .options.snow = opts) %dorng% {
     source("Helper Functions.R",local = TRUE)
     data <- rbind(generate_data(s,n,rep(0,d),beta,0,sigma,0,mu),generate_data(s,n,mu,beta,1,sigma,alt,mu))
     store_values <- matrix(nrow=n,ncol=n)
@@ -198,8 +193,6 @@ low_dim_plugin <- function(M,alpha_set,mu,beta,n,d,s,numFolds,sigma,alt,seed){
     num_rejected <- ifelse(t > qnorm(1-alpha_set), 1, 0)
     return(c(value,sqrt(variance),num_rejected,t))
   }
-  
-  stopCluster(cl)
   return(result)
 }
 
